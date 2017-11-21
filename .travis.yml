@@ -1,0 +1,18 @@
+sudo: required
+services:
+- docker
+language: bash
+script:
+# prepare qemu
+- docker run --rm --privileged multiarch/qemu-user-static:register --reset
+# build image
+- travis_wait 50 docker build -t offtechnologies/docker-arm32v6-searx:latest .
+# push image
+- >
+  if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+    docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
+    TAG=$(grep "ENV SEARX_VERSION" Dockerfile | awk 'NF>1{print $NF}')
+    docker tag offtechnologies/docker-arm32v6-searx offtechnologies/docker-arm32v6-searx:$TAG
+    docker push offtechnologies/docker-arm32v6-searx:$TAG
+    docker push offtechnologies/docker-arm32v6-searx:latest
+  fi

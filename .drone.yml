@@ -1,0 +1,9 @@
+pipeline:
+  docker:
+    image: plugins/docker
+    repo: offtechnologies/docker-arm32v6-searx
+    registry: docker.io
+    tags:
+      - latest
+      - 10.1.28
+    secrets: [ docker_username, docker_password ]
